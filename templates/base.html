@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+</head>
+<body>
+    <!-- stack two images to minimize flickering on swaps -->
+    <div style="position:relative">
+        {{img0|safe}}
+        <span id="mycanvas">{{img1|safe}}</span>
+    </div>
+
+    <!-- create a grid over the image, responsive to the mouse position -->
+    <map name="imgmap">
+        {% set bbox_x = (w / wn) | int %}
+        {% set bbox_y = (h / hn) | int %}
+        {% for x in range(wn) %}
+            {% for y in range(hn) %}
+                {% set i = wn * y + x %}
+                {% set im = "%04d"|format(i|float) %}
+                {% set x0 = x * bbox_x %}
+                {% set y0 = y * bbox_y %}
+                {% set x1 = x0 + bbox_x %}
+                {% set y1 = y0 + bbox_y %}
+                <area
+                    shape="rect"
+                    coords="{{x0}},{{y0}},{{x1}},{{y1}}"
+                    hx-get="hx/imgmap"
+                    hx-target="#mycanvas"
+                    hx-include="#imgmap-{{im}}"
+                    hx-trigger="mouseenter"
+                />
+                <input type="hidden" id="imgmap-{{im}}" name="img" value="{{im}}">
+            {% endfor %}
+        {% endfor %}
+    </map>
+</body>
+</html>
