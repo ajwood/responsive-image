@@ -7,8 +7,8 @@ app = Flask(__name__)
 # many grid positions exist)
 WIDTH_PX = 432
 HEIGHT_PX = 432
-HEIGHT_N = 11
-WIDTH_N = 11
+HEIGHT_N = 21
+WIDTH_N = 21
 
 
 @app.route("/")
@@ -25,4 +25,4 @@ def index(img="0000"):
 @app.route("/images/<img>")
 def images(img):
     """Static image server"""
-    return send_file(os.path.join("images.jpg", f"{img}.jpg"), mimetype="image/png")
+    return send_file(os.path.join("images.002", f"{img}.jpg"), mimetype="image/jpeg")
