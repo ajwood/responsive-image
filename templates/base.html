@@ -1,36 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://unpkg.com/htmx.org@1.6.0"></script>
+    <script>
+        window.addEventListener("load", function(){
+            const img = document.getElementById("mainimg");
+            for(let x=0; x<{{wn}}; x++){
+                for(let y=0; y<{{hn}}; y++){
+                    let area_id = `imgmap_${x}_${y}`;
+                    let i = {{wn}} * y + x;
+                    let im = String(i).padStart(4, '0');
+                    document.getElementById(area_id).addEventListener(
+                        "mouseenter", function() {
+                            img.src = `images/${im}`;
+                        }
+                    );
+                }
+            }
+        });
+    </script>
 </head>
 <body>
-    <!-- stack two images to minimize flickering on swaps -->
-    <div style="position:relative">
-        {{img0|safe}}
-        <span id="mycanvas">{{img1|safe}}</span>
-    </div>
+    <img id="mainimg" src="images/{{img}}" width="{{w}}" height="{{h}}" usemap="#imgmap" />
 
-    <!-- create a grid over the image, responsive to the mouse position -->
+    <!-- create a grid over the image -->
     <map name="imgmap">
         {% set bbox_x = (w / wn) | int %}
         {% set bbox_y = (h / hn) | int %}
         {% for x in range(wn) %}
             {% for y in range(hn) %}
-                {% set i = wn * y + x %}
-                {% set im = "%04d"|format(i|float) %}
                 {% set x0 = x * bbox_x %}
                 {% set y0 = y * bbox_y %}
                 {% set x1 = x0 + bbox_x %}
                 {% set y1 = y0 + bbox_y %}
                 <area
+                    id="imgmap_{{x}}_{{y}}"
                     shape="rect"
                     coords="{{x0}},{{y0}},{{x1}},{{y1}}"
-                    hx-get="hx/imgmap"
-                    hx-target="#mycanvas"
-                    hx-include="#imgmap-{{im}}"
-                    hx-trigger="mouseenter"
                 />
-                <input type="hidden" id="imgmap-{{im}}" name="img" value="{{im}}">
             {% endfor %}
         {% endfor %}
     </map>
